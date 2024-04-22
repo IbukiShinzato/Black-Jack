@@ -5,43 +5,51 @@ import (
 	"fmt"
 	"os"
 	"strconv"
-	"strings"
 )
 
 func main() {
 	deck := Deck{}
 	deck.setDeck()
-	fmt.Println(deck.cards[0])
-	sc := bufio.NewScanner(os.Stdin)
-	fmt.Println("プレイヤーの名前, 所持金を記入してください")
-	sc.Scan()
-	t := strings.Split(sc.Text(), ",")
-	name := ""
-	money := 0
-	for i, s := range t {
-		if i == 0 {
-			name += s
-		} else {
-			m, _ := strconv.Atoi(s)
-			money += m
-		}
-	}
-	player := Player{name, money}
-	fmt.Println(player)
 
-	fmt.Println("ディーラーの名前, 所持金を記入してください。")
+	player, dealer := start()
+	game(deck, player, dealer)
+}
+
+func start() (Player, Dealer) {
+	fmt.Printf("\nーーーブラックジャック！ーーー\n\n")
+	sc := bufio.NewScanner(os.Stdin)
+	var hand []Card
+
+	fmt.Printf("\nプレイヤーの名前を入力してください。\n")
 	sc.Scan()
-	t = strings.Split(sc.Text(), ", ")
-	name = ""
-	money = 0
-	for i, s := range t {
-		if i == 0 {
-			name += s
-		} else {
-			m, _ := strconv.Atoi(s)
-			money += m
-		}
-	}
-	dealer := Dealer{name, money}
-	fmt.Println(dealer)
+	name := sc.Text()
+
+	fmt.Printf("\nプレイヤーの所持金を入力してください。\n")
+	sc.Scan()
+	money, _ := strconv.Atoi(sc.Text())
+	player := Player{name, money, hand}
+
+	fmt.Printf("\nディーラーの名前を入力してください。\n")
+	sc.Scan()
+	name = sc.Text()
+
+	dealer := Dealer{name, hand}
+
+	return player, dealer
+}
+
+func game(deck Deck, player Player, dealer Dealer) {
+	fmt.Printf("\nーーーゲーム開始！ーーー\n\n")
+	deck.shuffle()
+	player.hand = []Card{}
+	dealer.hand = []Card{}
+
+	cnt := 0
+	player.hand = append(player.hand, deck.cards[cnt])
+	cnt += 1
+	player.hand = append(player.hand, deck.cards[cnt])
+	cnt += 1
+	dealer.hand = append(dealer.hand, deck.cards[cnt])
+	cnt += 1
+	dealer.hand = append(dealer.hand, deck.cards[cnt])
 }

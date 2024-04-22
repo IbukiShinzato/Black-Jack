@@ -1,6 +1,10 @@
 package main
 
-import "strconv"
+import (
+	"math/rand"
+	"strconv"
+	"time"
+)
 
 type Card struct {
 	suit string
@@ -23,4 +27,21 @@ func (d *Deck) setDeck() {
 			d.cards = append(d.cards, c)
 		}
 	}
+}
+
+func (d *Deck) shuffle() {
+	var n int
+	rand.Seed(time.Now().UnixNano())
+	cards := make([]Card, 52)
+	m := make(map[int]bool)
+	i := 0
+	for i < 52 {
+		n = rand.Intn(52)
+		if !m[n] {
+			cards[i] = d.cards[n]
+			i += 1
+			m[n] = true
+		}
+	}
+	d.cards = cards
 }
